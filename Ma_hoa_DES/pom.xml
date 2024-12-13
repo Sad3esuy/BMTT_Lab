@@ -11,4 +11,17 @@
         <exec.mainClass>com.mycompany.ma_hoa_des.Ma_hoa_DES</exec.mainClass>
     </properties>
     <name>Ma_hoa_doi_xung_hien_dai</name>
+    <dependencies>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15on</artifactId>
+            <version>1.70</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk15on</artifactId>
+            <version>1.70</version>
+        </dependency>
+    </dependencies>
+
 </project>
