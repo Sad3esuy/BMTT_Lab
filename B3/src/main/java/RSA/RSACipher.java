@@ -10,7 +10,7 @@ import java.util.Random;
  * @author nguye
  */
 public class RSACipher {
-        private BigInteger p, q, N, phi, E, D;
+    private BigInteger p, q, N, phi, E, D;
     private int bitlength;
 
     // Constructor to initialize bitlength
