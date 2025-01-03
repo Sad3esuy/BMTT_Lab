@@ -201,61 +201,63 @@ public class frm_Bob extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnBobGenerateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBobGenerateActionPerformed
-        try {
+       try {
             boolean read = false;
-            java.nio.file.Path dirPath = Paths.get("src/week_04");
+            java.nio.file.Path dirPath = Paths.get("src/CryptoUtil");
             if (!java.nio.file.Files.exists(dirPath)) {
                 java.nio.file.Files.createDirectories(dirPath);
             }
-            
-            // Reading Alice's public key
             while (!read) {
-                try (FileInputStream fis = new FileInputStream(dirPath.resolve("A.pub").toFile())) {
+                try (FileInputStream fis 
+                        = new FileInputStream(dirPath.resolve("A.pub").toFile())) {
                     read = true;
-                    byte[] alicePubKeyEnc = new byte[fis.available()];
-                    fis.read(alicePubKeyEnc);
-
-                    KeyFactory bobKeyFac = KeyFactory.getInstance("DH");
-                    X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(alicePubKeyEnc);
-                    alicePubKey = bobKeyFac.generatePublic(x509KeySpec);
-
-                    DHParameterSpec dhParamSpec = ((DHPublicKey) alicePubKey).getParams();
-
-                    KeyPairGenerator bobKpairGen = KeyPairGenerator.getInstance("DH");
-                    bobKpairGen.initialize(dhParamSpec);
-                    KeyPair bobKpair = bobKpairGen.generateKeyPair();
-
-                    bobKeyAgree = KeyAgreement.getInstance("DH");
-                    bobKeyAgree.init(bobKpair.getPrivate());
-
-                    byte[] bobPubKeyEnc = bobKpair.getPublic().getEncoded();
-
-                    try (FileOutputStream fos = new FileOutputStream(dirPath.resolve("B.pub").toFile())) {
-                        fos.write(bobPubKeyEnc);
-                        txtBobKey.setText(Base64.getEncoder().encodeToString(bobPubKeyEnc));
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
+            byte[] alicePubKeyEnc;
+            try (FileInputStream fis
+                    = new FileInputStream(dirPath.resolve("A.pub").toFile())) {
+                alicePubKeyEnc = new byte[fis.available()];
+                fis.read(alicePubKeyEnc);
+            }
+            KeyFactory bobKeyFac = KeyFactory.getInstance("DH");
+            X509EncodedKeySpec x509KeySpec
+                    = new X509EncodedKeySpec(alicePubKeyEnc);
+            alicePubKey = bobKeyFac.generatePublic(x509KeySpec);
+            DHParameterSpec dhParamSpec = ((DHPublicKey) alicePubKey).getParams();
+            KeyPairGenerator bobKpairGen = KeyPairGenerator.getInstance("DH");
+            bobKpairGen.initialize(dhParamSpec);
+            KeyPair bobKpair = bobKpairGen.generateKeyPair();
+            bobKeyAgree = KeyAgreement.getInstance("DH");
+            bobKeyAgree.init(bobKpair.getPrivate());
+            byte[] bobPubKeyEnc=bobKpair.getPublic().getEncoded();
+            try (FileOutputStream fos
+                    = new FileOutputStream(dirPath.resolve("B.pub").toFile())) {
+                fos.write(bobPubKeyEnc);
+            }
+            txtBobKey.setText(java.util.Base64.getEncoder()
+                    .encodeToString(bobPubKeyEnc));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+
     }//GEN-LAST:event_btnBobGenerateActionPerformed
 
     private void btnAliceDisplayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAliceDisplayActionPerformed
         try {
-            byte[] bkeyp;
-            try (FileInputStream fis = new FileInputStream(Paths.get("src/week_04/A.pub").toFile())) {
-                bkeyp = new byte[fis.available()];
-                fis.read(bkeyp);
-                txtAliceKey.setText(Base64.getEncoder().encodeToString(bkeyp)); // Display Base64 of the key
+            byte[] bkeyP;
+            try (FileInputStream fis
+                    = new FileInputStream(Paths.get("src/CryptoUtil/A.pub").toFile())) {
+                bkeyP = new byte[fis.available()];
+                
+            fis.read(bkeyP);
             }
+            txtAliceKey.setText(bkeyP.toString());
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+
     }//GEN-LAST:event_btnAliceDisplayActionPerformed
 
     private void btnMakeSecActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMakeSecActionPerformed
@@ -280,7 +282,7 @@ public class frm_Bob extends javax.swing.JFrame {
             SecretKeySpec desKeySpec = new SecretKeySpec(desKeyBytes, "DES");
             txtEncryptShare.setText(Base64.getEncoder().encodeToString(desKeySpec.getEncoded()));
 
-            String fileName = "src/week_04/B.txt";
+            String fileName = "src/CryptoUtil/B.txt";
             try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName))) {
                 bw.write(Base64.getEncoder().encodeToString(desKeySpec.getEncoded()));
             }

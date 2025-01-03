@@ -201,115 +201,74 @@ public class frm_Alice extends javax.swing.JFrame {
 
     private void btnAliceGenerateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAliceGenerateActionPerformed
         try {
-            // Generate parameters for Diffie-Hellman
-            AlgorithmParameterGenerator paramGen = AlgorithmParameterGenerator.getInstance("DH");
+            AlgorithmParameterGenerator paramGen
+                    = AlgorithmParameterGenerator.getInstance("DH");
             paramGen.init(512);
             AlgorithmParameters params = paramGen.generateParameters();
-
-            // Retrieve DHParameterSpec
-            DHParameterSpec dhSkipParamSpec = (DHParameterSpec) params.getParameterSpec(DHParameterSpec.class);
-
+            DHParameterSpec dhSkipParamSpec
+                    = (DHParameterSpec) params.getParameterSpec(DHParameterSpec.class);
             System.out.println("Generating a DH KeyPair...");
-
-            // Initialize KeyPairGenerator for Diffie-Hellman
             KeyPairGenerator aliceKpairGen = KeyPairGenerator.getInstance("DH");
             aliceKpairGen.initialize(dhSkipParamSpec);
-
-            // Generate Alice's KeyPair
             KeyPair aliceKpair = aliceKpairGen.generateKeyPair();
-
-            if (aliceKpair == null || aliceKpair.getPrivate() == null || aliceKpair.getPublic() == null) {
-                System.err.println("Error: Key pair generation failed");
-                return;
-            }
-
             System.out.println("Initializing the KeyAgreement Engine with DH private key");
-
-            // Initialize the KeyAgreement engine
-            aliceKeyAgree = KeyAgreement.getInstance("DH");  // Initialize the class-level variable
-            try {
-                aliceKeyAgree.init(aliceKpair.getPrivate());
-            } catch (InvalidKeyException e) {
-                System.err.println("Error initializing KeyAgreement: " + e.getMessage());
-                return;
-            }
-
-            // Assuming Bob's public key (for demonstration purposes) 
-            // You should have Bob's public key from a secure exchange process
+            aliceKeyAgree = KeyAgreement
+            .getInstance("DH");
+            aliceKeyAgree.init(aliceKpair.getPrivate());
             byte[] alicePubKeyEnc = aliceKpair.getPublic().getEncoded();
-
-            // Generate shared secret
-            try {
-                // Example of performing the key agreement phase with a dummy second party (Bob's public key)
-                // You should replace this with the actual shared key exchange process
-                aliceKeyAgree.doPhase(aliceKpair.getPublic(), true);
-                byte[] sharedSecret = aliceKeyAgree.generateSecret();
-                System.out.println("Shared secret: " + java.util.Base64.getEncoder().encodeToString(sharedSecret));
-            } catch (Exception e) {
-                System.err.println("Error during key agreement phase: " + e.getMessage());
-            }
-
-            // Specify directory path for saving the public key
-            java.nio.file.Path dirPath = Paths.get("src/week_04");
-
-            // Create the directory if it doesn't exist
+            java.nio.file.Path dirPath = Paths.get("src/CryptoUtil");
             if (!java.nio.file.Files.exists(dirPath)) {
                 java.nio.file.Files.createDirectories(dirPath);
             }
-
-            // Write Alice's public key to a file
-            try (FileOutputStream fos = new FileOutputStream(dirPath.resolve("A.pub").toFile())) {
+            try (FileOutputStream fos
+                    = new FileOutputStream(dirPath.resolve("A.pub").toFile())) {
                 fos.write(alicePubKeyEnc);
             }
-
-            // Display Alice's public key in Base64 encoding
-            txtAliceKey.setText(java.util.Base64.getEncoder().encodeToString(alicePubKeyEnc));
-
+            txtAliceKey.setText(java.util.Base64.getEncoder()
+                    .encodeToString(alicePubKeyEnc));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+
     }//GEN-LAST:event_btnAliceGenerateActionPerformed
 
     private void btnBobDisplayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBobDisplayActionPerformed
         try {
-            byte[] bkeyp;
-            // Read Bob's public key from file
-            try (FileInputStream fis = new FileInputStream(Paths.get("src/week_04/B.pub").toFile())) {
-                bkeyp = new byte[fis.available()];
-                fis.read(bkeyp); // Read the public key data
+            byte[] bkeyP;
+            try (FileInputStream fis
+                    = new FileInputStream(Paths.get("src/CryptoUtil/B.pub").toFile())) {
+                bkeyP = new byte[fis.available()];
+               
+                    fis.read(bkeyP);
             }
-            // Convert the byte array to a Base64 string for display
-            txtBobKey.setText(java.util.Base64.getEncoder().encodeToString(bkeyp));
+            txtBobKey.setText(bkeyP.toString());
         } catch (Exception ex) {
             ex.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error reading Bob's public key: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
+            }
+
     }//GEN-LAST:event_btnBobDisplayActionPerformed
 
     private void btnMakeSecActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMakeSecActionPerformed
         try {
             byte[] bobPubKeyEnc;
-            try (FileInputStream fis = new FileInputStream(Paths.get("src/week_04/B.pub").toFile())) {
-                bobPubKeyEnc = new byte[fis.available()];
-                fis.read(bobPubKeyEnc);
+            try (FileInputStream fis
+                    = new FileInputStream(Paths.get("src/CryptoUtil/B.pub").toFile())) {
+                bobPubKeyEnc = new byte[fis.available()];         
+                    fis.read(bobPubKeyEnc);
             }
-
             KeyFactory aliceKeyFac = KeyFactory.getInstance("DH");
             X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(bobPubKeyEnc);
             bobPubKey = aliceKeyFac.generatePublic(x509KeySpec);
-
             System.out.println("Executing PHASE1 of key agreement...");
             aliceKeyAgree.doPhase(bobPubKey, true);
-
             byte[] aliceSharedSecret = aliceKeyAgree.generateSecret();
-            System.out.println("Shared secret: " + CryptoUtil.toHexString(aliceSharedSecret));
-
+            System.out.println("khoa chung: secret (DEBUG ONLY):"
+                    + CryptoUtil.toHexString(aliceSharedSecret));
             txtShare.setText(CryptoUtil.toHexString(aliceSharedSecret));
-
         } catch (Exception ex) {
             ex.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error generating shared secret: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
+
     }//GEN-LAST:event_btnMakeSecActionPerformed
 
     private void btnEncryptSecKeyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEncryptSecKeyActionPerformed
@@ -332,7 +291,7 @@ public class frm_Alice extends javax.swing.JFrame {
             txtEncryptShare.setText(Base64.getEncoder().encodeToString(desKeySpec.getEncoded()));
 
             // Save the DES key to a file
-            String fileName = "src/week_04/A.txt";
+            String fileName = "src/CryptoUtil/A.txt";
             try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName))) {
                 bw.write(Base64.getEncoder().encodeToString(desKeySpec.getEncoded())); // Save Base64 encoded key to file
             }
