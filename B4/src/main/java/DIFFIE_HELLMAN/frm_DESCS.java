@@ -178,9 +178,9 @@ public class frm_DESCS extends javax.swing.JFrame {
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnOpenAlice)
-                    .addComponent(btnOpenBob))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnOpenBob)
+                    .addComponent(btnOpenAlice))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(bnMaHoa)
@@ -196,7 +196,7 @@ public class frm_DESCS extends javax.swing.JFrame {
     private void btnOpenAliceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenAliceActionPerformed
         try {
             BufferedReader br = null;
-            String fileName = "src/week_04/A.txt";
+            String fileName = "src/CryptoUtil/A.txt";
             br = new BufferedReader(new FileReader(fileName));
             StringBuffer sb = new StringBuffer();
             JOptionPane.showMessageDialog(null, "File Opened Successfully.");
@@ -217,7 +217,7 @@ public class frm_DESCS extends javax.swing.JFrame {
     private void btnOpenBobActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenBobActionPerformed
         try {
             BufferedReader br = null;
-            String fileName = "src/week_04/B.txt";
+            String fileName = "src/CryptoUtil/B.txt";
             br = new BufferedReader(new FileReader(fileName));
             StringBuffer sb = new StringBuffer();
             JOptionPane.showMessageDialog(null, "File Opened Successfully.");
